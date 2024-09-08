@@ -71,13 +71,19 @@ const sendTrackInfoToDiscord = async (track) => {
     const artistName = track.artists && track.artists[0] ? track.artists[0].name : 'Unknown Artist';
     const albumName = track.album ? track.album.name : 'Unknown Album';
     const trackUrl = track.external_urls ? track.external_urls.spotify : 'No URL';
+    const albumImageUrl = track.album.images && track.album.images[0] ? track.album.images[0].url : null;
     const durationMs = track.duration_ms || 0; // Total duration in milliseconds
     const durationFormatted = formatDuration(durationMs); // Format duration to "minutes:seconds"
 
     // Prepare the Discord message
     const discordMessage = {
-      content: `**Now Playing:**\n\n**Track:** ${trackName}\n**Artist:** ${artistName}\n**Album:** ${albumName}\n**Duration:** ${durationFormatted}\n[Listen on Spotify](${trackUrl})`,
+      content: `**Now Playing:**\n\n**Track:** ${trackName}\n**Artist:** ${artistName}\n**Album:** ${albumName}\n**Duration:** ${durationFormatted}\n**Link:** <${trackUrl}>`,
     };
+
+    // Include album image if available
+    if (albumImageUrl) {
+      discordMessage.content += `\n**Album Image:** ${albumImageUrl}`;
+    }
 
     // Send message to Discord
     await fetch(DISCORD_WEBHOOK_URL, {
