@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 const SpotifyWebApi = require('spotify-web-api-node');
 const fs = require('fs');
 const app = express();
-const port = 8888;
+const port = 5000;
 
 // Spotify API credentials from .env
 const SPOTIPY_CLIENT_ID = process.env.SPOTIPY_CLIENT_ID;
