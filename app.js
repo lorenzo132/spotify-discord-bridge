@@ -64,6 +64,11 @@ const formatDuration = (durationMs) => {
   return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 };
 
+// Function to sanitize message content to prevent mentions
+const sanitizeContent = (content) => {
+  return content.replace(/@/g, '@\u200b'); // Replace '@' with '@\u200b'
+};
+
 // Function to send track information to Discord
 const sendTrackInfoToDiscord = async (track) => {
   try {
@@ -76,20 +81,21 @@ const sendTrackInfoToDiscord = async (track) => {
     const durationFormatted = formatDuration(durationMs); // Format duration to "minutes:seconds"
 
     // Prepare the Discord message
-    const discordMessage = {
-      content: `**Now Playing:**\n\n**Track:** ${trackName}\n**Artist:** ${artistName}\n**Album:** ${albumName}\n**Duration:** ${durationFormatted}\n**Link:** <${trackUrl}>`,
-    };
+    let discordMessageContent = `**Now Playing:**\n\n**Track:** ${trackName}\n**Artist:** ${artistName}\n**Album:** ${albumName}\n**Duration:** ${durationFormatted}\n**Link:** <${trackUrl}>`;
 
     // Include album image if available
     if (albumImageUrl) {
-      discordMessage.content += `\n**Album Image:** ${albumImageUrl}`;
+      discordMessageContent += `\n**Album Image:** ${albumImageUrl}`;
     }
 
-    // Send message to Discord
+    // Sanitize content to prevent mentions
+    discordMessageContent = sanitizeContent(discordMessageContent);
+
+    // Send sanitized message to Discord
     await fetch(DISCORD_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(discordMessage),
+      body: JSON.stringify({ content: discordMessageContent }),
     });
     console.log('Track info sent to Discord!');
   } catch (error) {
