@@ -1,8 +1,7 @@
 require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
-const fetch = require('node-fetch');
-const SpotifyWebApi = require('spotify-web-api-node');
 const fs = require('fs');
+const SpotifyWebApi = require('spotify-web-api-node');
 const app = express();
 const port = 5000;
 
@@ -92,6 +91,7 @@ const sendTrackInfoToDiscord = async (track) => {
     discordMessageContent = sanitizeContent(discordMessageContent);
 
     // Send sanitized message to Discord
+    const { default: fetch } = await import('node-fetch');
     await fetch(DISCORD_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
